@@ -94,6 +94,12 @@
     .chat-input button:hover {
       background-color: #064c46;
     }
+
+    .loading {
+      font-size: 14px;
+      color: #075e54;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -101,7 +107,7 @@
   <div class="chat-header">
     <img src="https://i.imgur.com/h63biKE.jpg" alt="Chatbot">
     <div class="info">
-      <span class="name">Remaja Cerdas</span>
+      <span class="name">Rema Aja Cerdas😸</span>
       <span class="status">Online</span>
     </div>
   </div>
@@ -116,16 +122,30 @@
   <script>
     const chatDiv = document.getElementById("chat");
 
+    // Menampilkan sapaan pertama kali
+    window.onload = function() {
+      const welcomeMessage = `<div class="bot">Selamat datang! Aku Rema 😸. Apa yang bisa aku bantu?</div>`;
+      chatDiv.innerHTML += welcomeMessage;
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
     function sendMessage() {
       const input = document.getElementById("input");
       const pesan = input.value.trim();
       if (!pesan) return;
 
+      // Menampilkan pesan user
       const userBubble = `<div class="user">${pesan}</div>`;
       chatDiv.innerHTML += userBubble;
       input.value = "";
       chatDiv.scrollTop = chatDiv.scrollHeight;
 
+      // Menampilkan pesan loading
+      const loadingBubble = `<div class="bot loading">Mengetik...</div>`;
+      chatDiv.innerHTML += loadingBubble;
+      chatDiv.scrollTop = chatDiv.scrollHeight;
+
+      // Mengirim pesan ke Google Apps Script
       fetch("https://script.google.com/macros/s/AKfycbz-QOkg2cR1aDXv8zxSSc6xA_UyP_Z9Uaq1od2mwcZveFTHntmrvKfajYHxC6FAW8x2/exec", {
         method: "POST",
         headers: {
@@ -135,6 +155,10 @@
       })
       .then(response => response.text())
       .then(jawaban => {
+        // Hapus pesan loading dan tampilkan jawaban bot
+        const loadingMessages = document.querySelectorAll('.loading');
+        loadingMessages.forEach(msg => msg.remove());
+        
         const botBubble = `<div class="bot">${jawaban}</div>`;
         chatDiv.innerHTML += botBubble;
         chatDiv.scrollTop = chatDiv.scrollHeight;
